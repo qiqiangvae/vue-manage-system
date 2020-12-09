@@ -5,22 +5,18 @@
             <i v-if="!collapse" class="el-icon-s-fold"></i>
             <i v-else class="el-icon-s-unfold"></i>
         </div>
-        <div class="logo">后台管理系统</div>
+        <div class="logo">{{ title }}</div>
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
                 <div class="btn-fullscreen" @click="handleFullScreen">
-                    <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
+                    <el-tooltip effect="dark" :content="fullscreen ? `取消全屏` : `全屏`" placement="bottom">
                         <i class="el-icon-rank"></i>
                     </el-tooltip>
                 </div>
                 <!-- 消息中心 -->
                 <div class="btn-bell">
-                    <el-tooltip
-                        effect="dark"
-                        :content="message?`有${message}条未读消息`:`消息中心`"
-                        placement="bottom"
-                    >
+                    <el-tooltip effect="dark" :content="message ? `有${message}条未读消息` : `消息中心`" placement="bottom">
                         <router-link to="/tabs">
                             <i class="el-icon-bell"></i>
                         </router-link>
@@ -34,7 +30,7 @@
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
-                        {{username}}
+                        {{ username }}
                         <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
@@ -50,68 +46,73 @@
 </template>
 <script>
 import bus from '../common/bus';
+const applicationConf = require('../../assets/config/application.json')
+
 export default {
-    data() {
-        return {
-            collapse: false,
-            fullscreen: false,
-            name: 'linxin',
-            message: 2
-        };
+  data() {
+    return {
+      collapse: false,
+      fullscreen: false,
+      name: 'linxin',
+      message: 2
+    };
+  },
+  computed: {
+    username() {
+      let username = localStorage.getItem('ms_username');
+      return username ? username : this.name;
     },
-    computed: {
-        username() {
-            let username = localStorage.getItem('ms_username');
-            return username ? username : this.name;
-        }
-    },
-    methods: {
-        // 用户名下拉菜单选择事件
-        handleCommand(command) {
-            if (command == 'loginout') {
-                localStorage.removeItem('ms_username');
-                this.$router.push('/login');
-            }
-        },
-        // 侧边栏折叠
-        collapseChage() {
-            this.collapse = !this.collapse;
-            bus.$emit('collapse', this.collapse);
-        },
-        // 全屏事件
-        handleFullScreen() {
-            let element = document.documentElement;
-            if (this.fullscreen) {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitCancelFullScreen) {
-                    document.webkitCancelFullScreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-            } else {
-                if (element.requestFullscreen) {
-                    element.requestFullscreen();
-                } else if (element.webkitRequestFullScreen) {
-                    element.webkitRequestFullScreen();
-                } else if (element.mozRequestFullScreen) {
-                    element.mozRequestFullScreen();
-                } else if (element.msRequestFullscreen) {
-                    // IE11
-                    element.msRequestFullscreen();
-                }
-            }
-            this.fullscreen = !this.fullscreen;
-        }
-    },
-    mounted() {
-        if (document.body.clientWidth < 1500) {
-            this.collapseChage();
-        }
+    title() {
+      return applicationConf.title
     }
-};
+  },
+  methods: {
+    // 用户名下拉菜单选择事件
+    handleCommand(command) {
+      if (command == 'loginout') {
+        localStorage.removeItem('ms_username');
+        this.$router.push('/login');
+      }
+    },
+    // 侧边栏折叠
+    collapseChage() {
+      this.collapse = !this.collapse;
+      bus.$emit('collapse', this.collapse);
+    },
+    // 全屏事件
+    handleFullScreen() {
+      let element = document.documentElement;
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      } else {
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        }
+      }
+      this.fullscreen = !this.fullscreen;
+    }
+  },
+  mounted() {
+    if (document.body.clientWidth < 1500) {
+      this.collapseChage();
+    }
+  }
+}
 </script>
 <style scoped>
 .header {

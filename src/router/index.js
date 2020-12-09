@@ -25,9 +25,13 @@ export default new Router({
                     meta: { title: '自定义图标' }
                 },
                 {
-                    path: '/table',
-                    component: () => import(/* webpackChunkName: "table" */ '../components/page/BaseTable.vue'),
-                    meta: { title: '基础表格' }
+                    path: '/course-table',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/CourseTable.vue'),
+                    meta: { title: '课程列表' }
+                }, {
+                    path: '/teacher-table',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/TeacherTable.vue'),
+                    meta: { title: '教师列表' }
                 },
                 {
                     path: '/tabs',
@@ -96,11 +100,6 @@ export default new Router({
                     path: '/403',
                     component: () => import(/* webpackChunkName: "403" */ '../components/page/403.vue'),
                     meta: { title: '403' }
-                },
-                {
-                    path: '/donate',
-                    component: () => import(/* webpackChunkName: "donate" */ '../components/page/Donate.vue'),
-                    meta: { title: '支持作者' }
                 }
             ]
         },
