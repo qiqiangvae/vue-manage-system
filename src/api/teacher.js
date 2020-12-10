@@ -1,26 +1,28 @@
 import request from '../utils/request';
-import qs from 'qs';
 
 
 export const teacherList = query => {
     return request({
-        url: '/api/list/teacher',
-        method: 'get',
-        params: query
+        url: '/api/teacher/list',
+        data: query
     });
 };
 export const updateTeacher = form => {
     return request({
-        url: '/api/teacher/' + form.id,
-        method: 'put',
+        url: '/api/teacher/update',
         data: form
     });
 };
 
 export const addTeacher = form => {
     return request({
-        url: '/api/teacher/',
-        method: 'post',
+        url: '/api/teacher/add',
+        data: form
+    });
+};
+export const deleteTeacher = form => {
+    return request({
+        url: '/api/teacher/delete',
         data: form
     });
 };

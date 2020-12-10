@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import { teacherList, updateTeacher, addTeacher } from '../../api/teacher';
+import { teacherList, updateTeacher, addTeacher, deleteTeacher } from '../../api/teacher';
 export default {
   name: 'basetable',
   data() {
@@ -126,7 +126,6 @@ export default {
       },
       tableData: [],
       multipleSelection: [],
-      delList: [],
       editVisible: false,
       addVisible: false,
       pageInfo: {},
@@ -183,8 +182,10 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.$message.success('删除成功');
-          this.tableData.splice(index, 1);
+          deleteTeacher({ "ids": [row.id] }).then(res => {
+            this.getData()
+            this.$message.success(`成功删除${row.teacherName}`);
+          })
         })
         .catch(() => { });
     },
@@ -193,14 +194,17 @@ export default {
       this.multipleSelection = val;
     },
     delAllSelection() {
-      const length = this.multipleSelection.length;
-      let str = '';
-      this.delList = this.delList.concat(this.multipleSelection);
-      for (let i = 0; i < length; i++) {
-        str += this.multipleSelection[i].name + ' ';
-      }
-      this.$message.error(`删除了${str}`);
-      this.multipleSelection = [];
+      this.$confirm('确定要删除吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        let delIds = this.multipleSelection.map(item => item.id);
+        deleteCourse({ 'ids': delIds }).then(res => {
+          this.getData()
+          let str = this.multipleSelection.map(item => item.teacherName).join(',');
+          this.$message.success(`成功删除${str}`);
+          this.multipleSelection = [];
+        })
+      })
     },
     // 新增操作
     handleAdd() {
@@ -262,7 +266,7 @@ export default {
 }
 
 .handle-input {
-    width: 300px;
+    width: 200px;
     display: inline-block;
 }
 .table {

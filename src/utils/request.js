@@ -14,6 +14,9 @@ service.interceptors.request.use(
             'QING-CHA-TOKEN': localStorage.getItem('ms_token'),
             'QING-CHA-OPERATOR': localStorage.getItem('ms_username')
         }
+        if (!config.method) {
+            config.method = 'post'
+        }
         return config;
     },
     error => {
@@ -36,4 +39,12 @@ service.interceptors.response.use(
     }
 );
 
-export default service;
+const api = request => {
+    return service({
+        url: request.url,
+        data: request.data,
+        method: request.method ? request.method : 'post'
+    });
+};
+
+export default api;

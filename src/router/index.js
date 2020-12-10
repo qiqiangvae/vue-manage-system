@@ -34,6 +34,11 @@ export default new Router({
                     meta: { title: '教师列表' }
                 },
                 {
+                    path: '/student-table',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/StudentTable.vue'),
+                    meta: { title: '学生列表' }
+                },
+                {
                     path: '/tabs',
                     component: () => import(/* webpackChunkName: "tabs" */ '../components/page/Tabs.vue'),
                     meta: { title: 'tab选项卡' }

@@ -61,6 +61,11 @@ export default {
           title: '教师列表'
         },
         {
+          icon: 'el-icon-lx-cascades',
+          index: 'student-table',
+          title: '学生列表'
+        },
+        {
           icon: 'el-icon-lx-copy',
           index: 'tabs',
           title: 'tab选项卡'

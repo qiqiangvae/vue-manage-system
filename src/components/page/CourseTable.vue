@@ -52,13 +52,13 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="100px">
+            <el-form ref="editForm" :model="editForm" label-width="100px">
                 <el-form-item label="课程名称">
-                    <el-input v-model="form.courseName"></el-input>
+                    <el-input v-model="editForm.courseName"></el-input>
                 </el-form-item>
                 <el-form-item label="选择时间">
                     <el-date-picker
-                        v-model="form.dateRange"
+                        v-model="editForm.dateRange"
                         type="daterange"
                         value-format="yyyy-MM-dd"
                         range-separator="至"
@@ -69,7 +69,7 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="老师">
-                    <el-input v-model="form.teacher"></el-input>
+                    <el-input v-model="editForm.teacher"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { courseList, updateCourse, addCourse } from '../../api/index';
+import { courseList, updateCourse, addCourse, deleteCourse } from '../../api/course';
 export default {
   name: 'basetable',
   data() {
@@ -121,11 +121,10 @@ export default {
       },
       tableData: [],
       multipleSelection: [],
-      delList: [],
       editVisible: false,
       addVisible: false,
       pageInfo: {},
-      form: {},
+      editForm: {},
       addForm: {},
       id: -1
     };
@@ -135,8 +134,8 @@ export default {
   },
   methods: {
     formDateRangeChange(newValue) {
-      this.form.startDate = newValue[0]
-      this.form.endDate = newValue[1]
+      this.editForm.startDate = newValue[0]
+      this.editForm.endDate = newValue[1]
       this.$forceUpdate()
     },
     // 获取 课程列表数据
@@ -160,26 +159,29 @@ export default {
       // 二次确认删除
       this.$confirm('确定要删除吗？', '提示', {
         type: 'warning'
-      })
-        .then(() => {
-          this.$message.success('删除成功');
-          this.tableData.splice(index, 1);
+      }).then(() => {
+        deleteCourse({ "ids": [row.id] }).then(res => {
+          this.getData()
+          this.$message.success(`成功删除${row.courseName}`);
         })
-        .catch(() => { });
+      })
     },
     // 多选操作
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     delAllSelection() {
-      const length = this.multipleSelection.length;
-      let str = '';
-      this.delList = this.delList.concat(this.multipleSelection);
-      for (let i = 0; i < length; i++) {
-        str += this.multipleSelection[i].name + ' ';
-      }
-      this.$message.error(`删除了${str}`);
-      this.multipleSelection = [];
+      this.$confirm('确定要删除吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        let delIds = this.multipleSelection.map(item => item.id);
+        deleteCourse({ 'ids': delIds }).then(res => {
+          this.getData()
+          let str = this.multipleSelection.map(item => item.teacherName).join(',');
+          this.$message.success(`成功删除${str}`);
+          this.multipleSelection = [];
+        })
+      })
     },
     // 新增操作
     handleAdd() {
@@ -198,20 +200,20 @@ export default {
     },
     // 编辑操作
     handleEdit(index, row) {
-      this.form = row;
-      if (!this.form.dateRange) {
-        this.form.dateRange = []
+      this.editForm = row;
+      if (!this.editForm.dateRange) {
+        this.editForm.dateRange = []
       }
-      this.form.dateRange[0] = this.form.startDate
-      this.form.dateRange[1] = this.form.endDate
+      this.editForm.dateRange[0] = this.editForm.startDate
+      this.editForm.dateRange[1] = this.editForm.endDate
       this.editVisible = true;
     },
     // 保存编辑
     saveEdit() {
-      this.form.startDate = this.form.dateRange[0]
-      this.form.endDate = this.form.dateRange[1]
+      this.editForm.startDate = this.editForm.dateRange[0]
+      this.editForm.endDate = this.editForm.dateRange[1]
       this.editVisible = false;
-      updateCourse(this.form).then(res => {
+      updateCourse(this.editForm).then(res => {
         this.getData()
       });
     },
@@ -234,7 +236,7 @@ export default {
 }
 
 .handle-input {
-    width: 300px;
+    width: 200px;
     display: inline-block;
 }
 .table {
