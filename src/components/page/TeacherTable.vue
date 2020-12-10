@@ -216,7 +216,6 @@ export default {
     // 保存新增
     saveAdd() {
       this.$refs['addForm'].validate((valid) => {
-        debugger
         if (valid) {
           addTeacher(this.addForm).then(res => {
             this.getData()

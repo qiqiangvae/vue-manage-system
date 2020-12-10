@@ -70,7 +70,7 @@ export default {
           index: 'tabs',
           title: 'tab选项卡'
         },
-        {
+       /*  {
           icon: 'el-icon-lx-calendar',
           index: '3',
           title: '表单相关',
@@ -98,7 +98,7 @@ export default {
               title: '文件上传'
             }
           ]
-        },
+        }, */
         {
           icon: 'el-icon-lx-emoji',
           index: 'icon',
@@ -129,7 +129,7 @@ export default {
           index: 'i18n',
           title: '国际化功能'
         },
-        {
+        /* {
           icon: 'el-icon-lx-warn',
           index: '7',
           title: '错误处理',
@@ -143,7 +143,7 @@ export default {
               title: '404页面'
             }
           ]
-        }
+        } */
       ]
     };
   },

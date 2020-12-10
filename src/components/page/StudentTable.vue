@@ -168,16 +168,13 @@
         drag
         action="/api/student/import"
         name="excel"
+        :on-error="uploadError"
         :headers="uploadHeaders"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip" slot="tip">只能上传xlxs文件，且不超过500kb</div>
       </el-upload>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="importVisible = false">取 消</el-button>
-        <el-button type="primary" @click="doImport">导 入</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
@@ -317,8 +314,13 @@ export default {
         }
       });
     },
+    //导入
     handleImport() {
       this.importVisible = true;
+    },
+    uploadError(err, file, fileList) {
+      console.log(err.message);
+      this.$message.error(err.message);
     },
     // 分页导航
     handlePageChange(val) {
