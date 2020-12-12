@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i> 课程列表
+          <i class="el-icon-lx-cascades"></i> 报名列表
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -19,6 +19,19 @@
           @click="delAllSelection"
           >批量删除</el-button
         >
+        <el-select
+          v-model="query.signUpStatus"
+          placeholder="请选择报名状态"
+          clearable
+          class="handle-input mr10"
+          ><el-option
+            v-for="item in signUpStatusOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
         <el-input
           v-model="query.courseName"
           clearable
@@ -26,9 +39,9 @@
           class="handle-input mr10"
         ></el-input>
         <el-input
-          v-model="query.teacher"
+          v-model="query.studentName"
           clearable
-          placeholder="授课老师"
+          placeholder="学生姓名"
           class="handle-input mr10"
         ></el-input>
         <el-button type="primary" icon="el-icon-search" @click="handleSearch"
@@ -37,9 +50,9 @@
       </div>
       <el-table
         :data="tableData"
-        stripe
         class="table"
         ref="multipleTable"
+        :row-class-name="signUpStatusClassName"
         header-cell-class-name="table-header"
         @selection-change="handleSelectionChange"
       >
@@ -51,24 +64,29 @@
           align="center"
         ></el-table-column>
         <el-table-column prop="id" v-if="false"></el-table-column>
+        <el-table-column prop="studentId" v-if="false"></el-table-column>
+        <el-table-column
+          prop="studentName"
+          label="学生姓名"
+          align="center"
+        ></el-table-column>
+        <el-table-column prop="signUpId" v-if="false"></el-table-column>
         <el-table-column
           prop="courseName"
           label="课程名称"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="startDate"
-          label="开始时间"
+          prop="signUpDate"
+          label="报名时间"
           align="center"
         ></el-table-column>
-        <el-table-column prop="endDate" label="结束时间" align="center"></el-table-column>
         <el-table-column
-          prop="classHour"
-          label="课时（单位：节）"
-          width="150"
+          prop="signUpStatus"
+          label="报名状态"
           align="center"
+          :formatter="signUpStatusFormatter"
         ></el-table-column>
-        <el-table-column prop="teacher" label="授课老师" align="center"></el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
             <el-button
@@ -103,35 +121,57 @@
     <!-- 编辑弹出框 -->
     <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
       <el-form ref="editForm" :model="editForm" label-width="100px">
-        <el-form-item label="课程名称">
-          <el-input v-model="editForm.courseName"></el-input>
-        </el-form-item>
-        <el-form-item label="选择时间">
-          <el-date-picker
-            v-model="editForm.dateRange"
-            type="daterange"
-            value-format="yyyy-MM-dd"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            @input="formDateRangeChange"
+        <el-form-item label="学生姓名">
+          <el-select
+            v-model="editForm.studentId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入学生姓名"
+            :remote-method="searchStudent"
+            :loading="searchStudentLoading"
           >
+            <el-option
+              v-for="item in searchStudentOptions"
+              :key="item.id"
+              :label="item.studentName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="课程">
+          <el-select
+            v-model="editForm.courseId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入课程名称"
+            :remote-method="searchCourse"
+            :loading="searchCourseLoading"
+          >
+            <el-option
+              v-for="item in searchCourseOptions"
+              :key="item.id"
+              :label="item.courseName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="报名时间">
+          <el-date-picker v-model="editForm.signUpDate" value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="老师">
-              <el-input v-model="editForm.teacher"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="课时">
-              <el-input v-model="editForm.classHour"
-                ><template slot="append">节</template></el-input
-              >
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="报名状态">
+          <el-radio
+            v-for="item in signUpStatusOptions"
+            :key="item.value"
+            v-model="editForm.signUpStatus"
+            :label="item.value"
+            >{{ item.label }}</el-radio
+          >
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editVisible = false">取 消</el-button>
@@ -142,34 +182,57 @@
     <!-- 新增弹出框 -->
     <el-dialog title="新增" :visible.sync="addVisible" width="40%">
       <el-form :model="addForm" label-width="150px">
-        <el-form-item label="课程名称">
-          <el-input v-model="addForm.courseName"></el-input>
-        </el-form-item>
-        <el-form-item label="选择时间">
-          <el-date-picker
-            v-model="addForm.dateRange"
-            type="daterange"
-            value-format="yyyy-MM-dd"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+        <el-form-item label="学生姓名">
+          <el-select
+            v-model="addForm.studentId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入学生姓名"
+            :remote-method="searchStudent"
+            :loading="searchStudentLoading"
           >
+            <el-option
+              v-for="item in searchStudentOptions"
+              :key="item.id"
+              :label="item.studentName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="课程">
+          <el-select
+            v-model="addForm.courseId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入课程名称"
+            :remote-method="searchCourse"
+            :loading="searchCourseLoading"
+          >
+            <el-option
+              v-for="item in searchCourseOptions"
+              :key="item.id"
+              :label="item.courseName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="报名时间">
+          <el-date-picker v-model="addForm.signUpDate" value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="老师">
-              <el-input v-model="addForm.teacher"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="课时">
-              <el-input v-model="addForm.classHour"
-                ><template slot="append">节</template></el-input
-              >
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="报名状态">
+          <el-radio
+            v-for="item in signUpStatusOptions"
+            :key="item.value"
+            v-model="addForm.signUpStatus"
+            :label="item.value"
+            >{{ item.label }}</el-radio
+          >
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addVisible = false">取 消</el-button>
@@ -180,14 +243,16 @@
 </template>
 
 <script>
-import { courseList, updateCourse, addCourse, deleteCourse } from "../../api/course";
+import { signUpList, updateSignUp, addSignUp, deleteSignUp } from "../../api/signUp";
+import { studentList } from "../../api/student";
+import { courseList } from "../../api/course";
 export default {
   name: "basetable",
   data() {
     return {
       query: {
         teacher: "",
-        courseName: "",
+        signUpName: "",
         pageIndex: 1,
         pageSize: 10,
       },
@@ -199,6 +264,24 @@ export default {
       editForm: {},
       addForm: {},
       id: -1,
+      searchStudentOptions: [],
+      searchStudentLoading: false,
+      searchCourseOptions: [],
+      searchCourseLoading: false,
+      signUpStatusOptions: [
+        {
+          value: 0,
+          label: "预报名",
+        },
+        {
+          value: 1,
+          label: "已报名",
+        },
+        {
+          value: 2,
+          label: "取消报名",
+        },
+      ],
     };
   },
   created() {
@@ -212,7 +295,7 @@ export default {
     },
     // 获取 课程列表数据
     getData() {
-      courseList(this.query).then((res) => {
+      signUpList(this.query).then((res) => {
         console.log(res);
         this.tableData = res.data;
         this.pageInfo.pageIndex = res.pageIndex;
@@ -232,9 +315,9 @@ export default {
       this.$confirm("确定要删除吗？", "提示", {
         type: "warning",
       }).then(() => {
-        deleteCourse({ ids: [row.id] }).then((res) => {
+        deleteSignUp({ ids: [row.id] }).then((res) => {
           this.getData();
-          this.$message.success(`成功删除${row.courseName}`);
+          this.$message.success(`成功删除${row.signUpName}`);
         });
       });
     },
@@ -247,7 +330,7 @@ export default {
         type: "warning",
       }).then(() => {
         let delIds = this.multipleSelection.map((item) => item.id);
-        deleteCourse({ ids: delIds }).then((res) => {
+        deleteSignUp({ ids: delIds }).then((res) => {
           this.getData();
           let str = this.multipleSelection.map((item) => item.teacherName).join(",");
           this.$message.success(`成功删除${str}`);
@@ -261,10 +344,7 @@ export default {
     },
     // 保存新增
     saveAdd() {
-      this.addForm.startDate = this.addForm.dateRange[0];
-      this.addForm.endDate = this.addForm.dateRange[1];
-      console.info(this.addForm);
-      addCourse(this.addForm).then((res) => {
+      addSignUp(this.addForm).then((res) => {
         this.getData();
         this.addVisible = false;
         this.addForm = {};
@@ -273,19 +353,12 @@ export default {
     // 编辑操作
     handleEdit(index, row) {
       this.editForm = row;
-      if (!this.editForm.dateRange) {
-        this.editForm.dateRange = [];
-      }
-      this.editForm.dateRange[0] = this.editForm.startDate;
-      this.editForm.dateRange[1] = this.editForm.endDate;
       this.editVisible = true;
     },
     // 保存编辑
     saveEdit() {
-      this.editForm.startDate = this.editForm.dateRange[0];
-      this.editForm.endDate = this.editForm.dateRange[1];
       this.editVisible = false;
-      updateCourse(this.editForm).then((res) => {
+      updateSignUp(this.editForm).then((res) => {
         this.getData();
       });
     },
@@ -293,6 +366,41 @@ export default {
     handlePageChange(val) {
       this.$set(this.query, "pageIndex", val);
       this.getData();
+    },
+    searchStudent(val) {
+      this.searchStudentLoading = true;
+      studentList({ studentName: val }).then((res) => {
+        this.searchStudentLoading = false;
+        this.searchStudentOptions = res.data;
+      });
+    },
+    searchCourse(val) {
+      this.searchCourseLoading = true;
+      courseList({ courseName: val }).then((res) => {
+        this.searchCourseLoading = false;
+        this.searchCourseOptions = res.data;
+      });
+    },
+    signUpStatusClassName({ row, rowIndex }) {
+      if (row.signUpStatus === 0) {
+        return "warning-row";
+      } else if (row.signUpStatus === 1) {
+        return "success-row";
+      } else if (row.signUpStatus === 2) {
+        return "error-row";
+      }
+      return "";
+    },
+    signUpStatusFormatter(row, column) {
+      let val = row[column.property];
+      if (val === 0) {
+        return "预报名";
+      } else if (val === 1) {
+        return "已报名";
+      } else if (val === 2) {
+        return "取消报名";
+      }
+      return "";
     },
   },
 };
@@ -328,3 +436,4 @@ export default {
   height: 40px;
 }
 </style>
+<style></style>

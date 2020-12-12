@@ -46,7 +46,7 @@
       </div>
       <el-table
         :data="tableData"
-        border
+        stripe
         class="table"
         ref="multipleTable"
         header-cell-class-name="table-header"
@@ -60,20 +60,28 @@
           align="center"
         ></el-table-column>
         <el-table-column prop="id" v-if="false"></el-table-column>
-        <el-table-column prop="studentName" label="学生"></el-table-column>
-        <el-table-column prop="grade" label="年级"></el-table-column>
-        <el-table-column prop="age" label="年龄"></el-table-column>
+        <el-table-column prop="studentName" label="学生" align="center"></el-table-column>
+        <el-table-column prop="grade" label="年级" align="center"></el-table-column>
+        <el-table-column
+          prop="age"
+          label="年龄"
+          align="center"
+          width="60"
+        ></el-table-column>
         <el-table-column
           prop="gender"
           label="性别"
+          width="60"
+          align="center"
           :formatter="genderFormatter"
         ></el-table-column>
         <el-table-column
           prop="address"
           label="住址"
+          align="center"
           show-overflow-tooltip
         ></el-table-column>
-        <el-table-column prop="parent" label="家长"></el-table-column>
+        <el-table-column prop="parent" label="家长" align="center"></el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
             <el-button

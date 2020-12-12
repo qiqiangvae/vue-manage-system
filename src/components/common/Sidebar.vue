@@ -54,16 +54,20 @@ export default {
         {
           icon: 'el-icon-lx-cascades',
           index: 'course-table',
-          title: '课程列表'
+          title: '课程管理'
         }, {
           icon: 'el-icon-lx-cascades',
           index: 'teacher-table',
-          title: '教师列表'
+          title: '教师管理'
         },
         {
           icon: 'el-icon-lx-cascades',
           index: 'student-table',
-          title: '学生列表'
+          title: '学生管理'
+        },{
+          icon: 'el-icon-lx-cascades',
+          index: 'sign-up-table',
+          title: '报名管理'
         },
         {
           icon: 'el-icon-lx-copy',

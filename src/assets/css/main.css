@@ -3,10 +3,7 @@
     padding: 0;
 }
 
-html,
-body,
-#app,
-.wrapper {
+html, body, #app, .wrapper {
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -19,7 +16,6 @@ body {
 a {
     text-decoration: none
 }
-
 
 .content-box {
     position: absolute;
@@ -78,17 +74,27 @@ a {
     background: #f6faff;
 }
 
+.el-table .warning-row {
+    background: oldlace;
+}
+
+.el-table .success-row {
+    background: #cdf0bb;
+}
+
+.el-table .error-row {
+    background: #f5cccc;
+}
+
 .mgb20 {
     margin-bottom: 20px;
 }
 
-.move-enter-active,
-.move-leave-active {
+.move-enter-active, .move-leave-active {
     transition: opacity .5s;
 }
 
-.move-enter,
-.move-leave {
+.move-enter, .move-leave {
     opacity: 0;
 }
 
@@ -102,8 +108,7 @@ a {
     text-align: center;
 }
 
-.el-time-panel__content::after,
-.el-time-panel__content::before {
+.el-time-panel__content::after, .el-time-panel__content::before {
     margin-top: -7px;
 }
 
