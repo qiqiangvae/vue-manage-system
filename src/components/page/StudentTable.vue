@@ -178,6 +178,7 @@
         name="excel"
         :on-error="uploadError"
         :headers="uploadHeaders"
+        :on-success="uploadSuccess"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -273,7 +274,7 @@ export default {
         type: "warning",
       }).then(() => {
         let delIds = this.multipleSelection.map((item) => item.id);
-        deleteCourse({ ids: delIds }).then((res) => {
+        deleteStudent({ ids: delIds }).then((res) => {
           this.getData();
           let str = this.multipleSelection.map((item) => item.studentName).join(",");
           this.$message.success(`成功删除${str}`);
@@ -329,6 +330,9 @@ export default {
     uploadError(err, file, fileList) {
       console.log(err.message);
       this.$message.error(err.message);
+    },
+    uploadSuccess() {
+      this.getData();
     },
     // 分页导航
     handlePageChange(val) {

@@ -94,7 +94,12 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-card shadow="hover">
-          <schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
+          <schart
+            ref="bar"
+            class="schart"
+            canvasId="bar"
+            :options="gradeDataThroughStudentHistogramOptions"
+          ></schart>
         </el-card>
       </el-col>
       <el-col :span="12">
@@ -109,6 +114,7 @@
 <script>
 import Schart from "vue-schart";
 import bus from "../common/bus";
+import { analyseGradeDataThroughStudent } from "../../api/dashboard";
 export default {
   name: "dashboard",
   data() {
@@ -126,7 +132,7 @@ export default {
         {
           title: "今天要写100行代码加几个bug吧",
           status: false,
-        }
+        },
       ],
       data: [
         {
@@ -158,23 +164,14 @@ export default {
           value: 1065,
         },
       ],
-      options: {
+      gradeDataThroughStudentHistogramOptions: {
         type: "bar",
         title: {
-          text: "各课程报名人数统计",
+          text: "",
         },
         xRorate: 25,
-        labels: ["周一", "周二", "周三", "周四", "周五"],
-        datasets: [
-          {
-            label: "男生",
-            data: [234, 278, 270, 190, 230],
-          },
-          {
-            label: "女生",
-            data: [144, 198, 150, 235, 120],
-          },
-        ],
+        labels: [],
+        datasets: [],
       },
       options2: {
         type: "line",
@@ -207,10 +204,11 @@ export default {
       return this.name === "admin" ? "超级管理员" : "普通用户";
     },
   },
-  // created() {
-  //     this.handleListener();
-  //     this.changeDate();
-  // },
+  created() {
+    //   this.handleListener();
+    //   this.changeDate();
+    this.getGradeDataThroughStudentHistogram();
+  },
   // activated() {
   //     this.handleListener();
   // },
@@ -224,6 +222,20 @@ export default {
       this.data.forEach((item, index) => {
         const date = new Date(now - (6 - index) * 86400000);
         item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+      });
+    },
+    getGradeDataThroughStudentHistogram() {
+      analyseGradeDataThroughStudent().then((res) => {
+        console.log(res);
+        this.gradeDataThroughStudentHistogramOptions.title.text = res.title;
+        this.gradeDataThroughStudentHistogramOptions.labels = res.labels;
+        this.gradeDataThroughStudentHistogramOptions.datasets = [];
+        Object.keys(res.datasets).forEach((key) => {
+          this.gradeDataThroughStudentHistogramOptions.datasets.push({
+            label: key,
+            data: res.datasets[key],
+          });
+        });
       });
     },
     // handleListener() {
