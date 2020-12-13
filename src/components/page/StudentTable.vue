@@ -76,6 +76,11 @@
           :formatter="genderFormatter"
         ></el-table-column>
         <el-table-column
+          prop="mobileNumber"
+          label="联系电话"
+          align="center"
+        ></el-table-column>
+        <el-table-column
           prop="address"
           label="住址"
           align="center"
@@ -129,6 +134,9 @@
           <el-radio v-model="editForm.gender" :label="1">男</el-radio>
           <el-radio v-model="editForm.gender" :label="2">女</el-radio>
         </el-form-item>
+        <el-form-item label="联系电话" prop="mobileNumber">
+          <el-input v-model="editForm.mobileNumber"> </el-input>
+        </el-form-item>
         <el-form-item label="住址" prop="address">
           <el-input v-model="editForm.address"> </el-input>
         </el-form-item>
@@ -160,6 +168,9 @@
         </el-form-item>
         <el-form-item label="住址" prop="address">
           <el-input v-model="addForm.address"> </el-input>
+        </el-form-item>
+        <el-form-item label="联系电话" prop="mobileNumber">
+          <el-input v-model="addForm.mobileNumber"> </el-input>
         </el-form-item>
         <el-form-item label="家长">
           <el-input v-model="addForm.parent"> </el-input>

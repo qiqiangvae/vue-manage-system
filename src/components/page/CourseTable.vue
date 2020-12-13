@@ -121,7 +121,20 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="老师">
-              <el-input v-model="editForm.teacher"></el-input>
+              <el-select
+                v-model="editForm.teacherId"
+                filterable
+                reserve-keyword
+                placeholder="老师名字"
+              >
+                <el-option
+                  v-for="item in searchTeacherOptions"
+                  :key="item.id"
+                  :label="item.teacherName"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -159,7 +172,20 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="老师">
-              <el-input v-model="addForm.teacher"></el-input>
+              <el-select
+                v-model="addForm.teacherId"
+                filterable
+                reserve-keyword
+                placeholder="老师名字"
+              >
+                <el-option
+                  v-for="item in searchTeacherOptions"
+                  :key="item.id"
+                  :label="item.teacherName"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -181,6 +207,7 @@
 
 <script>
 import { courseList, updateCourse, addCourse, deleteCourse } from "../../api/course";
+import { teacherList } from "../../api/teacher";
 export default {
   name: "basetable",
   data() {
@@ -199,10 +226,13 @@ export default {
       editForm: {},
       addForm: {},
       id: -1,
+      searchTeacherOptions: [],
+      searchTeacherLoading: false,
     };
   },
   created() {
     this.getData();
+    this.searchTeacher();
   },
   methods: {
     formDateRangeChange(newValue) {
@@ -293,6 +323,11 @@ export default {
     handlePageChange(val) {
       this.$set(this.query, "pageIndex", val);
       this.getData();
+    },
+    searchTeacher(val) {
+      teacherList({ needPag: false }).then((res) => {
+        this.searchTeacherOptions = res.data;
+      });
     },
   },
 };

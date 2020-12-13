@@ -119,43 +119,29 @@
     </div>
 
     <!-- 编辑弹出框 -->
-    <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
+    <el-dialog title="编辑报名信息" :visible.sync="editVisible" width="40%">
       <el-form ref="editForm" :model="editForm" label-width="100px">
         <el-form-item label="学生姓名">
-          <el-select
-            v-model="editForm.studentId"
-            filterable
-            remote
-            reserve-keyword
-            placeholder="请输入学生姓名"
-            :remote-method="searchStudent"
-            :loading="searchStudentLoading"
-          >
-            <el-option
-              v-for="item in searchStudentOptions"
-              :key="item.id"
-              :label="item.studentName"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
+          <el-input v-model="editForm.studentId" v-if="false"></el-input>
+          <el-input v-model="editForm.studentName" disabled></el-input>
+          
         </el-form-item>
         <el-form-item label="课程">
           <el-select
             v-model="editForm.courseId"
             filterable
-            remote
             reserve-keyword
             placeholder="请输入课程名称"
-            :remote-method="searchCourse"
-            :loading="searchCourseLoading"
           >
             <el-option
               v-for="item in searchCourseOptions"
               :key="item.id"
               :label="item.courseName"
               :value="item.id"
-            >
+              ><span style="float: left">{{ item.courseName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{
+                item.teacher
+              }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -180,7 +166,7 @@
     </el-dialog>
 
     <!-- 新增弹出框 -->
-    <el-dialog title="新增" :visible.sync="addVisible" width="40%">
+    <el-dialog title="新增报名信息" :visible.sync="addVisible" width="40%">
       <el-form :model="addForm" label-width="150px">
         <el-form-item label="学生姓名">
           <el-select
@@ -197,7 +183,10 @@
               :key="item.id"
               :label="item.studentName"
               :value="item.id"
-            >
+              ><span style="float: left">{{ item.studentName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{
+                item.grade
+              }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -205,18 +194,18 @@
           <el-select
             v-model="addForm.courseId"
             filterable
-            remote
             reserve-keyword
             placeholder="请输入课程名称"
-            :remote-method="searchCourse"
-            :loading="searchCourseLoading"
           >
             <el-option
               v-for="item in searchCourseOptions"
               :key="item.id"
               :label="item.courseName"
               :value="item.id"
-            >
+              ><span style="float: left">{{ item.courseName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{
+                item.teacher
+              }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -286,6 +275,7 @@ export default {
   },
   created() {
     this.getData();
+    this.searchCourse();
   },
   methods: {
     formDateRangeChange(newValue) {
@@ -376,8 +366,7 @@ export default {
     },
     searchCourse(val) {
       this.searchCourseLoading = true;
-      courseList({ courseName: val }).then((res) => {
-        this.searchCourseLoading = false;
+      courseList({ needPage: false }).then((res) => {
         this.searchCourseOptions = res.data;
       });
     },
