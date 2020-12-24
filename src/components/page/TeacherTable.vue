@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i> 教师列表
+          <i class="qingcha el-icon-qingcha-laoshi"></i> 教师列表
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -78,8 +78,8 @@
         ></el-table-column>
         <el-table-column
           prop="workAge"
-          label="工龄"
-          width="60"
+          label="从教年限"
+          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -135,7 +135,7 @@
           <el-radio v-model="editForm.gender" :label="1">男</el-radio>
           <el-radio v-model="editForm.gender" :label="2">女</el-radio>
         </el-form-item>
-        <el-form-item label="工龄">
+        <el-form-item label="从教年限">
           <el-slider v-model="editForm.workAge" :max="50" show-input> </el-slider>
         </el-form-item>
         <el-form-item label="介绍" prop="introduction">
@@ -168,7 +168,7 @@
           <el-radio v-model="addForm.gender" :label="1">男</el-radio>
           <el-radio v-model="addForm.gender" :label="2">女</el-radio>
         </el-form-item>
-        <el-form-item label="工龄">
+        <el-form-item label="从教年限">
           <el-slider v-model="addForm.workAge" :max="50" show-input> </el-slider>
         </el-form-item>
         <el-form-item label="介绍" prop="introduction">

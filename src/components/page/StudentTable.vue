@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i> 学生列表
+          <i class="qingcha el-icon-qingcha-xuesheng"></i> 学生列表
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -49,6 +49,7 @@
         stripe
         class="table"
         ref="multipleTable"
+        @row-dblclick="gotoStudentInfoPage"
         header-cell-class-name="table-header"
         @selection-change="handleSelectionChange"
       >
@@ -249,7 +250,6 @@ export default {
     // 获取 课程列表数据
     getData() {
       studentList(this.query).then((res) => {
-        console.log(res);
         this.tableData = res.data;
         this.pageInfo.pageIndex = res.pageIndex;
         this.pageInfo.pageSize = res.pageSize;
@@ -349,6 +349,9 @@ export default {
     handlePageChange(val) {
       this.$set(this.query, "pageIndex", val);
       this.getData();
+    },
+    gotoStudentInfoPage(row, column, event) {
+      this.$router.push({ path: "/student-info-page", query: { id: row.id } });
     },
   },
 };

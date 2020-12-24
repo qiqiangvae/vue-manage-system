@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i> 报名列表
+          <i class="qingcha el-icon-qingcha-baoming"></i> 报名列表
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -124,7 +124,6 @@
         <el-form-item label="学生姓名">
           <el-input v-model="editForm.studentId" v-if="false"></el-input>
           <el-input v-model="editForm.studentName" disabled></el-input>
-          
         </el-form-item>
         <el-form-item label="课程">
           <el-select

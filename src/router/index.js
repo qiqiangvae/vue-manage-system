@@ -39,6 +39,11 @@ export default new Router({
                     meta: { title: '学生列表' }
                 },
                 {
+                    path: '/student-info-page',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/StudentInfoPage.vue'),
+                    meta: { title: '学生信息' },
+                },
+                {
                     path: '/sign-up-table',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/SignUpTable.vue'),
                     meta: { title: '报名列表' }

@@ -1,4 +1,14 @@
+[class*=" el-icon-lx"], [class^=el-icon-lx] {
+    font-family: lx-iconfont!important;
+    margin-right: 5px;
+    text-align: center;
+    vertical-align: middle;
+}
 
-    [class*=" el-icon-lx"], [class^=el-icon-lx] {
-        font-family: lx-iconfont!important;
-    }
+.qingcha {
+    font-family: "qingcha" !important;
+    margin-right: 5px;
+    width: 24px;
+    text-align: center;
+    vertical-align: middle;
+  }

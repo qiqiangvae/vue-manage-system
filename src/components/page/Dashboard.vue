@@ -1,46 +1,58 @@
 <template>
-  <div>
+  <div class="dashboard-context">
     <el-row :gutter="20">
-      <el-col :span="8">
-        <el-card shadow="hover" class="mgb20" style="height: 252px">
-          <div class="user-info">
-            <img src="../../assets/img/img.jpg" class="user-avator" alt />
-            <div class="user-info-cont">
-              <div class="user-info-name">{{ name }}</div>
-              <div>{{ role }}</div>
-            </div>
-          </div>
-          <div class="user-info-list">
-            上次登录时间：
-            <span>2019-11-01</span>
-          </div>
-          <div class="user-info-list">
-            上次登录地点：
-            <span>东莞</span>
-          </div>
-        </el-card>
-        <el-card shadow="hover" style="height: 252px">
-          <div slot="header" class="clearfix">
-            <span>学生总计</span>
-          </div>
-          男生占比 <el-progress :percentage="56" color="#42b983"></el-progress>女生占比
-          <el-progress :percentage="44" color="#f1e05a"></el-progress>
-        </el-card>
-      </el-col>
       <el-col :span="16">
+        <!-- 日历 -->
+        <el-calendar v-model="calendarValue">
+          <template slot="dateCell" slot-scope="{ date, data }">
+            <p
+              :class="data.isSelected ? 'is-selected' : ''"
+              @click="selectCalendarDate(date, data)"
+            >
+              {{ dateCellFormatter(data) }}
+            </p>
+          </template>
+        </el-calendar>
+      </el-col>
+      <el-col :span="8">
+        <!-- 数据总览 -->
         <el-row :gutter="20" class="mgb20">
-          <el-col :span="8">
+          <el-col :span="12">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
               <div class="grid-content grid-con-1">
-                <i class="el-icon-lx-people grid-con-icon"></i>
+                <i class="qingcha el-icon-qingcha-xuesheng grid-con-icon"></i>
                 <div class="grid-cont-right">
                   <div class="grid-num">1234</div>
-                  <div>用户访问量</div>
+                  <div>学生总数</div>
                 </div>
               </div>
             </el-card>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="12">
+            <el-card shadow="hover" :body-style="{ padding: '0px' }">
+              <div class="grid-content grid-con-2">
+                <i class="qingcha el-icon-qingcha-laoshi grid-con-icon"></i>
+                <div class="grid-cont-right">
+                  <div class="grid-num">34</div>
+                  <div>教师人数</div>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" class="mgb20">
+          <el-col :span="12">
+            <el-card shadow="hover" :body-style="{ padding: '0px' }">
+              <div class="grid-content grid-con-1">
+                <i class="qingcha el-icon-qingcha-kecheng1 grid-con-icon"></i>
+                <div class="grid-cont-right">
+                  <div class="grid-num">20</div>
+                  <div>开放课程数</div>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+          <el-col :span="12">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
               <div class="grid-content grid-con-2">
                 <i class="el-icon-lx-notice grid-con-icon"></i>
@@ -51,18 +63,8 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover" :body-style="{ padding: '0px' }">
-              <div class="grid-content grid-con-3">
-                <i class="el-icon-lx-goods grid-con-icon"></i>
-                <div class="grid-cont-right">
-                  <div class="grid-num">5000</div>
-                  <div>数量</div>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
         </el-row>
+        <!-- 待办事项 -->
         <el-card shadow="hover" style="height: 403px">
           <div slot="header" class="clearfix">
             <span>待办事项</span>
@@ -104,10 +106,17 @@
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover">
-          <schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
+          <schart
+            ref="line"
+            class="schart"
+            canvasId="line"
+            :options="studentScoreOptions"
+          ></schart>
         </el-card>
       </el-col>
     </el-row>
+    <!-- 回到顶部 -->
+    <el-backtop />
   </div>
 </template>
 
@@ -115,22 +124,24 @@
 import Schart from "vue-schart";
 import bus from "../common/bus";
 import { analyseGradeDataThroughStudent } from "../../api/dashboard";
+import { findStudentScore } from "../../api/studentExamScore";
 export default {
   name: "dashboard",
   data() {
     return {
       name: localStorage.getItem("ms_username"),
+      calendarValue: new Date(),
       todoList: [
         {
-          title: "今天要修复100个bug",
+          title: "参加县教育局关于学生在校安全的座谈会",
           status: false,
         },
         {
-          title: "今天要修复100个bug",
+          title: "期末电话回访",
           status: false,
         },
         {
-          title: "今天要写100行代码加几个bug吧",
+          title: "老师内部会议",
           status: false,
         },
       ],
@@ -173,26 +184,13 @@ export default {
         labels: [],
         datasets: [],
       },
-      options2: {
+      studentScoreOptions: {
         type: "line",
         title: {
-          text: "最近几个月各品类销售趋势图",
+          text: "",
         },
-        labels: ["6月", "7月", "8月", "9月", "10月"],
-        datasets: [
-          {
-            label: "家电",
-            data: [234, 278, 270, 190, 230],
-          },
-          {
-            label: "百货",
-            data: [164, 178, 150, 135, 160],
-          },
-          {
-            label: "食品",
-            data: [74, 118, 200, 235, 90],
-          },
-        ],
+        labels: [],
+        datasets: [],
       },
     };
   },
@@ -208,6 +206,7 @@ export default {
     //   this.handleListener();
     //   this.changeDate();
     this.getGradeDataThroughStudentHistogram();
+    this.getStudentScoreHistogram();
   },
   // activated() {
   //     this.handleListener();
@@ -217,6 +216,17 @@ export default {
   //     bus.$off('collapse', this.handleBus);
   // },
   methods: {
+    selectCalendarDate(date, data) {
+      console.log(data);
+    },
+    dateCellFormatter(data) {
+      let result =
+        data.day.split("-").slice(1).join("-") + " " + (data.isSelected ? "✔️" : "");
+      if (data.day == "2020-12-30") {
+        result = result + "\n" + "期末考试";
+      }
+      return result;
+    },
     changeDate() {
       const now = new Date().getTime();
       this.data.forEach((item, index) => {
@@ -232,6 +242,20 @@ export default {
         this.gradeDataThroughStudentHistogramOptions.datasets = [];
         Object.keys(res.datasets).forEach((key) => {
           this.gradeDataThroughStudentHistogramOptions.datasets.push({
+            label: key,
+            data: res.datasets[key],
+          });
+        });
+      });
+    },
+    getStudentScoreHistogram() {
+      findStudentScore().then((res) => {
+        console.log(res);
+        this.studentScoreOptions.title.text = res.title;
+        this.studentScoreOptions.labels = res.labels;
+        this.studentScoreOptions.datasets = [];
+        Object.keys(res.datasets).forEach((key) => {
+          this.studentScoreOptions.datasets.push({
             label: key,
             data: res.datasets[key],
           });
@@ -257,6 +281,9 @@ export default {
 </script>
 
 <style scoped>
+.is-selected {
+  color: #1989fa;
+}
 .el-row {
   margin-bottom: 20px;
 }

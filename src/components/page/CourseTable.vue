@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i> 课程列表
+          <i class="qingcha el-icon-qingcha-kecheng1"></i> 课程列表
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
