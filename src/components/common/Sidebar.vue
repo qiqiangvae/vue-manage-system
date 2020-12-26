@@ -19,7 +19,9 @@
             </template>
             <template v-for="subItem in item.subs">
               <el-submenu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
-                <template slot="title">{{ subItem.title }}</template>
+                <template slot="title">
+                  <span slot="title">{{ subItem.title }}</span>
+                </template>
                 <el-menu-item
                   v-for="(threeItem, i) in subItem.subs"
                   :key="i"
@@ -57,29 +59,63 @@ export default {
           title: "系统首页",
         },
         {
-          icon: "qingcha el-icon-qingcha-kecheng1",
-          index: "course-table",
-          title: "课程管理",
+          icon: "qingcha el-icon-qingcha-jiaowuguanli",
+          index: "educational-manage",
+          title: "教务管理",
+          subs: [
+            {
+              index: "course-table",
+              title: "课程管理",
+            },
+            {
+              index: "student-table",
+              title: "学生管理",
+            },
+            {
+              index: "sign-up-table",
+              title: "报名管理",
+            },
+          ],
+        },
+        {
+          icon: "qingcha el-icon-qingcha-yingxiaoguanli",
+          index: "marketing-center",
+          title: "营销中心",
         },
         {
           icon: "qingcha el-icon-qingcha-laoshi",
-          index: "teacher-table",
-          title: "教师管理",
+          index: "staff-manage",
+          title: "职工管理",
+          subs: [
+            {
+              index: "teacher-table",
+              title: "教师管理",
+            },
+          ],
         },
         {
-          icon: "qingcha el-icon-qingcha-xuesheng",
-          index: "student-table",
-          title: "学生管理",
+          icon: "qingcha el-icon-qingcha-iconfontxiaoxi",
+          index: "message-center",
+          title: "消息中心",
         },
         {
-          icon: "qingcha el-icon-qingcha-baoming",
-          index: "sign-up-table",
-          title: "报名管理",
-        },
-        {
-          icon: "qingcha el-icon-qingcha-xuanxiangka",
-          index: "tabs",
-          title: "tab选项卡",
+          icon: "qingcha el-icon-qingcha-xitongshezhi",
+          index: "system-settings",
+          title: "系统设置",
+          subs: [
+            {
+              index: "account-manage",
+              title: "账号管理",
+            },
+            {
+              index: "role-manage",
+              title: "角色管理",
+            },
+            {
+              index: "authority-manage",
+              title: "权限管理",
+            },
+          ],
         },
         /*  {
           icon: 'el-icon-lx-calendar',
@@ -110,11 +146,11 @@ export default {
             }
           ]
         }, */
-        {
+        /*  {
           icon: "el-icon-lx-emoji",
           index: "icon",
           title: "自定义图标",
-        },
+        }, */
         /*  {
           icon: 'el-icon-pie-chart',
           index: 'charts',

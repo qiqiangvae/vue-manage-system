@@ -1,7 +1,7 @@
 <template>
   <div class="login-wrap">
     <div class="ms-login">
-      <div class="ms-title">后台管理系统</div>
+      <div class="ms-title">{{systemName}}</div>
       <el-form
         :model="param"
         :rules="rules"
@@ -62,6 +62,7 @@ export default {
         authCode: "",
         authCodeId: "",
       },
+      systemName: localStorage.getItem("application.title"),
       authCodeImage: "",
       rules: {
         username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
@@ -119,7 +120,7 @@ export default {
   line-height: 50px;
   text-align: center;
   font-size: 20px;
-  color: #fff;
+  color: rgb(96, 184, 224);
   border-bottom: 1px solid #ddd;
 }
 .ms-login {

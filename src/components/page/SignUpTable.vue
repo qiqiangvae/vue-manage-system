@@ -304,9 +304,9 @@ export default {
       this.$confirm("确定要删除吗？", "提示", {
         type: "warning",
       }).then(() => {
-        deleteSignUp({ ids: [row.id] }).then((res) => {
+        deleteSignUp({ keys: [row.id] }).then((res) => {
           this.getData();
-          this.$message.success(`成功删除${row.signUpName}`);
+          this.$message.success(`成功删除${row.studentName}的报名信息`);
         });
       });
     },
@@ -319,10 +319,10 @@ export default {
         type: "warning",
       }).then(() => {
         let delIds = this.multipleSelection.map((item) => item.id);
-        deleteSignUp({ ids: delIds }).then((res) => {
+        deleteSignUp({ keys: delIds }).then((res) => {
           this.getData();
-          let str = this.multipleSelection.map((item) => item.teacherName).join(",");
-          this.$message.success(`成功删除${str}`);
+          let str = this.multipleSelection.map((item) => item.studentName).join(",");
+          this.$message.success(`成功删除${str}的报名信息`);
           this.multipleSelection = [];
         });
       });

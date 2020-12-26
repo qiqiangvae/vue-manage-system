@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="qingcha el-icon-qingcha-kecheng1"></i> 课程列表
+          <i class="qingcha el-icon-qingcha-baoming"></i> 角色列表
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -20,15 +20,15 @@
           >批量删除</el-button
         >
         <el-input
-          v-model="query.courseName"
+          v-model="query.roleCode"
           clearable
-          placeholder="课程名称"
+          placeholder="角色代码"
           class="handle-input mr10"
         ></el-input>
         <el-input
-          v-model="query.teacher"
+          v-model="query.roleName"
           clearable
-          placeholder="授课老师"
+          placeholder="角色名称"
           class="handle-input mr10"
         ></el-input>
         <el-button type="primary" icon="el-icon-search" @click="handleSearch"
@@ -37,13 +37,17 @@
       </div>
       <el-table
         :data="tableData"
-        stripe
         class="table"
         ref="multipleTable"
         header-cell-class-name="table-header"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+          :selectable="checkSelectable"
+        ></el-table-column>
         <el-table-column
           type="index"
           label="序号"
@@ -52,25 +56,23 @@
         ></el-table-column>
         <el-table-column prop="id" v-if="false"></el-table-column>
         <el-table-column
-          prop="courseName"
-          label="课程名称"
+          prop="roleName"
+          label="角色名称"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="startDate"
-          label="开始时间"
+          prop="roleCode"
+          label="角色代码"
           align="center"
         ></el-table-column>
-        <el-table-column prop="endDate" label="结束时间" align="center"></el-table-column>
         <el-table-column
-          prop="classHour"
-          label="课时（单位：节）"
-          width="150"
+          prop="builtIn"
+          :formatter="roleBuiltInFormatter"
+          label="是否内置角色"
           align="center"
         ></el-table-column>
-        <el-table-column prop="teacher" label="授课老师" align="center"></el-table-column>
         <el-table-column label="操作" width="180" align="center">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="!scope.row.builtIn">
             <el-button
               type="text"
               icon="el-icon-edit"
@@ -101,50 +103,14 @@
     </div>
 
     <!-- 编辑弹出框 -->
-    <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
+    <el-dialog title="编辑角色" :visible.sync="editVisible" width="40%">
       <el-form ref="editForm" :model="editForm" label-width="100px">
-        <el-form-item label="课程名称">
-          <el-input v-model="editForm.courseName"></el-input>
+        <el-form-item label="角色姓名">
+          <el-input v-model="editForm.roleName"></el-input>
         </el-form-item>
-        <el-form-item label="选择时间">
-          <el-date-picker
-            v-model="editForm.dateRange"
-            type="daterange"
-            value-format="yyyy-MM-dd"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            @input="formDateRangeChange"
-          >
-          </el-date-picker>
+        <el-form-item label="角色代码">
+          <el-input v-model="editForm.roleCode" disabled></el-input>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="老师">
-              <el-select
-                v-model="editForm.teacherId"
-                filterable
-                reserve-keyword
-                placeholder="老师名字"
-              >
-                <el-option
-                  v-for="item in searchTeacherOptions"
-                  :key="item.id"
-                  :label="item.teacherName"
-                  :value="item.id"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="课时">
-              <el-input v-model="editForm.classHour"
-                ><template slot="append">节</template></el-input
-              >
-            </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editVisible = false">取 消</el-button>
@@ -153,49 +119,14 @@
     </el-dialog>
 
     <!-- 新增弹出框 -->
-    <el-dialog title="新增" :visible.sync="addVisible" width="40%">
-      <el-form :model="addForm" label-width="150px">
-        <el-form-item label="课程名称">
-          <el-input v-model="addForm.courseName"></el-input>
+    <el-dialog title="新增角色" :visible.sync="addVisible" width="40%">
+      <el-form ref="editForm" :model="addForm" label-width="100px">
+        <el-form-item label="角色姓名">
+          <el-input v-model="addForm.roleName"></el-input>
         </el-form-item>
-        <el-form-item label="选择时间">
-          <el-date-picker
-            v-model="addForm.dateRange"
-            type="daterange"
-            value-format="yyyy-MM-dd"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          >
-          </el-date-picker>
+        <el-form-item label="角色代码">
+          <el-input v-model="addForm.roleCode"></el-input>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="老师">
-              <el-select
-                v-model="addForm.teacherId"
-                filterable
-                reserve-keyword
-                placeholder="老师名字"
-              >
-                <el-option
-                  v-for="item in searchTeacherOptions"
-                  :key="item.id"
-                  :label="item.teacherName"
-                  :value="item.id"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="课时">
-              <el-input v-model="addForm.classHour"
-                ><template slot="append">节</template></el-input
-              >
-            </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addVisible = false">取 消</el-button>
@@ -206,15 +137,14 @@
 </template>
 
 <script>
-import { courseList, updateCourse, addCourse, deleteCourse } from "../../api/course";
-import { teacherList } from "../../api/teacher";
+import { roleList, updateRole, addRole, deleteRole } from "../../api/role";
 export default {
   name: "basetable",
   data() {
     return {
       query: {
-        teacher: "",
-        courseName: "",
+        roleCode: "",
+        roleName: "",
         pageIndex: 1,
         pageSize: 10,
       },
@@ -225,25 +155,15 @@ export default {
       pageInfo: {},
       editForm: {},
       addForm: {},
-      id: -1,
-      searchTeacherOptions: [],
-      searchTeacherLoading: false,
     };
   },
   created() {
     this.getData();
-    this.searchTeacher();
   },
   methods: {
-    formDateRangeChange(newValue) {
-      this.editForm.startDate = newValue[0];
-      this.editForm.endDate = newValue[1];
-      this.$forceUpdate();
-    },
-    // 获取 课程列表数据
+    // 获取 角色列表数据
     getData() {
-      courseList(this.query).then((res) => {
-        console.log(res);
+      roleList(this.query).then((res) => {
         this.tableData = res.data;
         this.pageInfo.pageIndex = res.pageIndex;
         this.pageInfo.pageSize = res.pageSize;
@@ -262,9 +182,9 @@ export default {
       this.$confirm("确定要删除吗？", "提示", {
         type: "warning",
       }).then(() => {
-        deleteCourse({ keys: [row.id] }).then((res) => {
+        deleteRole({ keys: [row.roleCode] }).then((res) => {
           this.getData();
-          this.$message.success(`成功删除${row.courseName}`);
+          this.$message.success(`成功删除${row.roleName}`);
         });
       });
     },
@@ -276,10 +196,10 @@ export default {
       this.$confirm("确定要删除吗？", "提示", {
         type: "warning",
       }).then(() => {
-        let delIds = this.multipleSelection.map((item) => item.id);
-        deleteCourse({ keys: delIds }).then((res) => {
+        let delIds = this.multipleSelection.map((item) => item.roleCode);
+        deleteRole({ keys: delIds }).then((res) => {
           this.getData();
-          let str = this.multipleSelection.map((item) => item.teacherName).join(",");
+          let str = this.multipleSelection.map((item) => item.roleName).join(",");
           this.$message.success(`成功删除${str}`);
           this.multipleSelection = [];
         });
@@ -291,10 +211,7 @@ export default {
     },
     // 保存新增
     saveAdd() {
-      this.addForm.startDate = this.addForm.dateRange[0];
-      this.addForm.endDate = this.addForm.dateRange[1];
-      console.info(this.addForm);
-      addCourse(this.addForm).then((res) => {
+      addRole(this.addForm).then((res) => {
         this.getData();
         this.addVisible = false;
         this.addForm = {};
@@ -303,19 +220,12 @@ export default {
     // 编辑操作
     handleEdit(index, row) {
       this.editForm = row;
-      if (!this.editForm.dateRange) {
-        this.editForm.dateRange = [];
-      }
-      this.editForm.dateRange[0] = this.editForm.startDate;
-      this.editForm.dateRange[1] = this.editForm.endDate;
       this.editVisible = true;
     },
     // 保存编辑
     saveEdit() {
-      this.editForm.startDate = this.editForm.dateRange[0];
-      this.editForm.endDate = this.editForm.dateRange[1];
       this.editVisible = false;
-      updateCourse(this.editForm).then((res) => {
+      updateRole(this.editForm).then((res) => {
         this.getData();
       });
     },
@@ -324,10 +234,12 @@ export default {
       this.$set(this.query, "pageIndex", val);
       this.getData();
     },
-    searchTeacher(val) {
-      teacherList({ needPag: false }).then((res) => {
-        this.searchTeacherOptions = res.data;
-      });
+    roleBuiltInFormatter(row, column) {
+      let val = row[column.property];
+      return val ? "内置角色" : "非内置角色";
+    },
+    checkSelectable(row) {
+      return !row.builtIn;
     },
   },
 };
@@ -363,3 +275,4 @@ export default {
   height: 40px;
 }
 </style>
+<style></style>

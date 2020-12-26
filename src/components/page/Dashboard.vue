@@ -65,7 +65,7 @@
           </el-col>
         </el-row>
         <!-- 待办事项 -->
-        <el-card shadow="hover" style="height: 403px">
+        <el-card shadow="hover" style="height: 418px">
           <div slot="header" class="clearfix">
             <span>待办事项</span>
             <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
@@ -145,36 +145,6 @@ export default {
           status: false,
         },
       ],
-      data: [
-        {
-          name: "2018/09/04",
-          value: 1083,
-        },
-        {
-          name: "2018/09/05",
-          value: 941,
-        },
-        {
-          name: "2018/09/06",
-          value: 1139,
-        },
-        {
-          name: "2018/09/07",
-          value: 816,
-        },
-        {
-          name: "2018/09/08",
-          value: 327,
-        },
-        {
-          name: "2018/09/09",
-          value: 228,
-        },
-        {
-          name: "2018/09/10",
-          value: 1065,
-        },
-      ],
       gradeDataThroughStudentHistogramOptions: {
         type: "bar",
         title: {
@@ -203,18 +173,17 @@ export default {
     },
   },
   created() {
-    //   this.handleListener();
-    //   this.changeDate();
+    this.handleListener();
     this.getGradeDataThroughStudentHistogram();
     this.getStudentScoreHistogram();
   },
-  // activated() {
-  //     this.handleListener();
-  // },
-  // deactivated() {
-  //     window.removeEventListener('resize', this.renderChart);
-  //     bus.$off('collapse', this.handleBus);
-  // },
+  activated() {
+      this.handleListener();
+  },
+  deactivated() {
+      window.removeEventListener('resize', this.renderChart);
+      bus.$off('collapse', this.handleBus);
+  },
   methods: {
     selectCalendarDate(date, data) {
       console.log(data);
@@ -226,13 +195,6 @@ export default {
         result = result + "\n" + "期末考试";
       }
       return result;
-    },
-    changeDate() {
-      const now = new Date().getTime();
-      this.data.forEach((item, index) => {
-        const date = new Date(now - (6 - index) * 86400000);
-        item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-      });
     },
     getGradeDataThroughStudentHistogram() {
       analyseGradeDataThroughStudent().then((res) => {
@@ -249,8 +211,7 @@ export default {
       });
     },
     getStudentScoreHistogram() {
-      findStudentScore().then((res) => {
-        console.log(res);
+      findStudentScore({ id: 4 }).then((res) => {
         this.studentScoreOptions.title.text = res.title;
         this.studentScoreOptions.labels = res.labels;
         this.studentScoreOptions.datasets = [];
@@ -262,20 +223,20 @@ export default {
         });
       });
     },
-    // handleListener() {
-    //     bus.$on('collapse', this.handleBus);
-    //     // 调用renderChart方法对图表进行重新渲染
-    //     window.addEventListener('resize', this.renderChart);
-    // },
-    // handleBus(msg) {
-    //     setTimeout(() => {
-    //         this.renderChart();
-    //     }, 200);
-    // },
-    // renderChart() {
-    //     this.$refs.bar.renderChart();
-    //     this.$refs.line.renderChart();
-    // }
+    handleListener() {
+      bus.$on("collapse", this.handleBus);
+      // 调用renderChart方法对图表进行重新渲染
+      window.addEventListener("resize", this.renderChart);
+    },
+    handleBus(msg) {
+      setTimeout(() => {
+        this.renderChart();
+      }, 200);
+    },
+    renderChart() {
+      this.$refs.bar.renderChart();
+      this.$refs.line.renderChart();
+    },
   },
 };
 </script>

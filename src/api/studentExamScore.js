@@ -1,9 +1,9 @@
 import request from '../utils/request';
 
 
-export const findStudentScore = () => {
+export const findStudentScore = query => {
     return request({
-        url: '/api/findStudentScore',
-        method: 'get'
+        url: '/api/studentExamScore',
+        data: query
     });
 };

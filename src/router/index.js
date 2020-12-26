@@ -49,7 +49,7 @@ export default new Router({
                     meta: { title: '报名列表' }
                 },
                 {
-                    path: '/tabs',
+                    path: '/message-center',
                     component: () => import(/* webpackChunkName: "tabs" */ '../components/page/Tabs.vue'),
                     meta: { title: 'tab选项卡' }
                 },
@@ -99,6 +99,18 @@ export default new Router({
                     path: '/i18n',
                     component: () => import(/* webpackChunkName: "i18n" */ '../components/page/I18n.vue'),
                     meta: { title: '国际化' }
+                },
+                {
+                    // 角色页面
+                    path: '/role-manage',
+                    component: () => import(/* webpackChunkName: "permission" */ '../components/page/RoleTable.vue'),
+                    meta: { title: '角色管理' }
+                },
+                {
+                    // 权限页面
+                    path: '/authority-manage',
+                    component: () => import(/* webpackChunkName: "permission" */ '../components/page/AuthorityPage.vue'),
+                    meta: { title: '权限管理' }
                 },
                 {
                     // 权限页面

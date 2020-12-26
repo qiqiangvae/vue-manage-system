@@ -269,7 +269,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          deleteStudent({ ids: [row.id] }).then((res) => {
+          deleteStudent({ keys: [row.id] }).then((res) => {
             this.getData();
             this.$message.success(`成功删除${row.studentName}`);
           });
@@ -285,7 +285,7 @@ export default {
         type: "warning",
       }).then(() => {
         let delIds = this.multipleSelection.map((item) => item.id);
-        deleteStudent({ ids: delIds }).then((res) => {
+        deleteStudent({ keys: delIds }).then((res) => {
           this.getData();
           let str = this.multipleSelection.map((item) => item.studentName).join(",");
           this.$message.success(`成功删除${str}`);

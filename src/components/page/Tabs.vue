@@ -2,7 +2,7 @@
     <div class="">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="qingcha el-icon-qingcha-xuanxiangka"></i> tab选项卡</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="qingcha el-icon-qingcha-xuanxiangka"></i> 消息中心</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
